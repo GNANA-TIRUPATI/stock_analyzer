@@ -1,0 +1,77 @@
+# Scoring Weights Configuration
+# Indian Day-Trading Stock Analyzer v1.0
+#
+# All weights must sum to 1.0 (excluding risk_penalty which is subtracted).
+# Each sub-metric weight within a category must also sum to 1.0.
+#
+# IMPORTANT: Changing these weights will produce different rankings.
+# Document any changes and their rationale.
+
+version: "1.0"
+
+# =============================================================================
+# Category Weights (must sum to 1.0 excluding risk_penalty)
+# =============================================================================
+category_weights:
+  movement: 0.35        # Intraday price movement characteristics
+  volatility: 0.20      # Historical volatility measures
+  liquidity: 0.25       # Volume and liquidity indicators
+  consistency: 0.20     # Frequency and regularity of movement
+  risk_penalty: 0.10    # Subtracted from total score
+
+# =============================================================================
+# Sub-metric Weights (each group must sum to 1.0)
+# =============================================================================
+
+# Movement sub-metrics
+movement_weights:
+  avg_hl_range_pct: 0.40       # Average High-Low range percentage
+  avg_oc_move_pct: 0.30        # Average Open-to-Close movement percentage
+  median_hl_range_pct: 0.30    # Median High-Low range percentage
+
+# Volatility sub-metrics
+volatility_weights:
+  normalized_atr: 0.50         # ATR normalized by closing price
+  daily_return_std: 0.50       # Standard deviation of daily returns
+
+# Liquidity sub-metrics
+liquidity_weights:
+  avg_volume: 0.50             # Average daily trading volume
+  volume_consistency: 0.30     # Inverse of volume coefficient of variation
+  relative_volume_trend: 0.20  # Recent volume vs period average
+
+# Consistency sub-metrics
+consistency_weights:
+  movement_frequency: 0.60     # Fraction of days with meaningful movement
+  streak_length: 0.40          # Longest consecutive active-day streak
+
+# Risk penalty sub-metrics
+risk_penalty_weights:
+  max_adverse_move: 0.40       # Maximum single-day adverse return
+  downside_deviation: 0.30     # Std dev of negative returns only
+  gap_risk: 0.30               # Frequency of large overnight gaps
+
+# =============================================================================
+# Thresholds
+# =============================================================================
+thresholds:
+  # Movement threshold multiplier (threshold = median_hl_range * this value)
+  movement_threshold_multiplier: 0.50
+
+  # Gap risk threshold: overnight gap > this % flagged
+  gap_risk_threshold_pct: 2.0
+
+  # Minimum trading sessions as fraction of expected
+  min_session_coverage: 0.80
+
+  # Maximum fraction of zero-volume days before exclusion
+  max_zero_volume_fraction: 0.20
+
+  # Maximum fraction of invalid OHLC days before exclusion
+  max_invalid_ohlc_fraction: 0.20
+
+  # Suspicious overnight gap threshold for corporate action warning
+  suspicious_gap_threshold_pct: 20.0
+
+  # Stale data: max trading days since last data point
+  stale_data_max_days: 3
