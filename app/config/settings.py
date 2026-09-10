@@ -48,9 +48,18 @@ class AppSettings(BaseSettings):
         default="dev-secret-key-change-in-production",
         description="Flask secret key",
     )
-    flask_host: str = Field(default="127.0.0.1", description="Flask host")
-    flask_port: int = Field(default=5000, description="Flask port")
-    flask_debug: bool = Field(default=True, description="Flask debug mode")
+    flask_host: str = Field(
+        default_factory=lambda: os.getenv("FLASK_HOST", "0.0.0.0" if os.getenv("PORT") or os.getenv("RENDER") else "127.0.0.1"),
+        description="Flask host",
+    )
+    flask_port: int = Field(
+        default_factory=lambda: int(os.getenv("PORT", os.getenv("FLASK_PORT", "5000"))),
+        description="Flask port",
+    )
+    flask_debug: bool = Field(
+        default_factory=lambda: os.getenv("FLASK_DEBUG", "false" if os.getenv("PORT") or os.getenv("RENDER") else "true").lower() in ("true", "1", "yes"),
+        description="Flask debug mode",
+    )
 
     # Rate limiting
     max_requests_per_second: float = Field(
